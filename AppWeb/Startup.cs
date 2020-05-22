@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AppWeb.Actions;
+using AppWeb.Chat;
+using AppWeb.Repositories;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using System;
 
 namespace AppWeb
 {
@@ -26,6 +24,13 @@ namespace AppWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            var assembly = AppDomain.CurrentDomain.Load("AppWeb");
+            services.AddMediatR(assembly);
+            
+            services.AddScoped<INotificationHandler<Notification>, ChatHandler>();
+
+            services.AddSingleton<IRepository, Repository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
