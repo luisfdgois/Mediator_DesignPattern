@@ -1,6 +1,4 @@
-﻿using AppWeb.Chat;
-using AppWeb.Informations;
-using AppWeb.Repositories;
+﻿using AppWeb.Communications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,30 +10,23 @@ namespace AppWeb.Controllers
     public class ChatController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly IRepository _repository;
 
-        public ChatController(IMediator mediator, IRepository repository)
+        public ChatController(IMediator mediator)
         {
             _mediator = mediator;
-            _repository = repository;
         }
-
         [HttpGet]
         public IActionResult Index()
         {
-            var result = _repository.Get();
-
-            if (result.Count == 0) return BadRequest(Json("Chat vazio!"));
-
-            return Ok(Json(result));
+            return Ok();
         }
 
         [HttpPut("{idFrom:Guid}")]
         public IActionResult Send(Guid idFrom, string message)
         {
-            var notification = new Notification(idFrom, message);
+            var msg = new Message(idFrom, message);
 
-            var result = _mediator.Publish(notification);
+            var result = _mediator.Publish(msg);
 
             if (!result.IsCompletedSuccessfully) return BadRequest();
 
@@ -45,9 +36,11 @@ namespace AppWeb.Controllers
         [HttpPost("{name}")]
         public IActionResult Participate(string name)
         {
-            var participant = new Participant(name);
+            var join = new Join(name);
 
-            _repository.Add(participant);
+            var result = _mediator.Publish(join);
+
+            if (!result.IsCompletedSuccessfully) return BadRequest();
 
             return Ok();
         }

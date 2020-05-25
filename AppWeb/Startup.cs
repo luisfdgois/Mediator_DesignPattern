@@ -1,5 +1,5 @@
-using AppWeb.Actions;
 using AppWeb.Chat;
+using AppWeb.Communications;
 using AppWeb.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -28,7 +28,8 @@ namespace AppWeb
             var assembly = AppDomain.CurrentDomain.Load("AppWeb");
             services.AddMediatR(assembly);
             
-            services.AddScoped<INotificationHandler<Notification>, ChatHandler>();
+            services.AddScoped<INotificationHandler<Message>, ChatHandler>();
+            services.AddScoped<INotificationHandler<Join>, ChatHandler>();
 
             services.AddSingleton<IRepository, Repository>();
         }

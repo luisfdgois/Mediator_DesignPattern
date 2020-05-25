@@ -1,4 +1,4 @@
-﻿using AppWeb.Informations;
+﻿using AppWeb.Communications;
 using AppWeb.Repositories;
 using MediatR;
 using System.Linq;
@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace AppWeb.Chat
 {
-    public class ChatHandler : INotificationHandler<Notification>
+    public class ChatHandler : INotificationHandler<Message>,
+                               INotificationHandler<Join>
     {
         private readonly IRepository _repository;
 
@@ -16,7 +17,7 @@ namespace AppWeb.Chat
             _repository = repository;       
         }
 
-        public Task Handle(Notification notification, CancellationToken cancellationToken)
+        public Task Handle(Message notification, CancellationToken cancellationToken)
         {
             var name = _repository.Get().FirstOrDefault(p => p.Id.Equals(notification.IdFrom)).Name;
 
@@ -24,9 +25,18 @@ namespace AppWeb.Chat
             {
                 if (!participant.Id.Equals(notification.IdFrom))
                 {
-                    participant.Notify(name, notification.Time, notification.Message);
+                    participant.Notify(name, notification.Time, notification._Message);
                 }
             }
+
+            return Task.CompletedTask;
+        }
+
+        public Task Handle(Join notification, CancellationToken cancellationToken)
+        {
+            var participant = new Participant(notification.Name);
+
+            _repository.Add(participant);
 
             return Task.CompletedTask;
         }
