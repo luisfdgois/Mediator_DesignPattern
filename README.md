@@ -3,4 +3,4 @@ Implementação do Design Pattern Mediator em C# utilizando um projeto Aplicativ
 
 O problema consiste em um chat, em que os participantes desse chat necessitam comunicar-se uns com outros por meio de mensagens.
 
-O design pattern será aplicado com o intuito de manter a comunicação entre vários componentes, porém de forma ímplicita sem que um conheça ou tenha dependência direta com os outros.
+O design pattern será aplicado com o intuito de encapisular essa conexão, mantendo a comunicação entre os componentes de forma ímplicita sem que um conheça ou tenha dependência direta com os outros.
